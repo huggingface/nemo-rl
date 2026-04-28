@@ -141,6 +141,70 @@ def test_response_dataset_gsm8k_with_subset():
     assert first_example["messages"][1]["content"][:20] == "Natalia sold 48/2 = "
 
 
+def test_seqqa_synth_mcq_dataset_adapter():
+    raw_data = [
+        {
+            "id": "526189b3-504f-42cd-bc03-9d1e60b05132",
+            "question": "Estimate the GC percentage.",
+            "question_len": 27,
+            "ideal": "64",
+            "ideal_len": 2,
+            "distractors": ["128", "63", "61"],
+            "subtask": "seq_gc_pct",
+            "source": "hf-carbon/natural-plasmids",
+        },
+        {
+            "id": "b0df2d01-91dc-4a44-bbe4-a3c2e200b602",
+            "question": "How many open reading frames are present?",
+            "question_len": 41,
+            "ideal": "4",
+            "ideal_len": 1,
+            "distractors": ["2", "7", "6"],
+            "subtask": "orf_count_over_threshold",
+            "source": "procedural",
+        },
+    ]
+
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+        json.dump(raw_data, f)
+        data_path = f.name
+
+    data_config = {
+        "dataset_name": "SeqQASynthMCQ",
+        "data_path": data_path,
+        "subset": None,
+        "split": "train",
+        "processor": "multichoice_qa_processor",
+    }
+
+    dataset = load_response_dataset(data_config)
+    repeated_dataset = load_response_dataset(data_config)
+
+    assert dataset.task_name == "seqqa-synth-mcq"
+    assert len(dataset.dataset) == 2
+
+    first_example = dataset.dataset[0]
+    repeated_first_example = repeated_dataset.dataset[0]
+
+    assert set(first_example.keys()) == {
+        "question",
+        "options",
+        "answer",
+        "task_name",
+        "id",
+        "subtask",
+        "source",
+    }
+    assert first_example["options"] == repeated_first_example["options"]
+    assert first_example["answer"] == repeated_first_example["answer"]
+    assert len(first_example["options"]) == 4
+    assert set(first_example["options"].keys()) == {"A", "B", "C", "D"}
+    assert set(first_example["options"].values()) == {"64", "128", "63", "61"}
+    assert first_example["options"][first_example["answer"]] == "64"
+    assert first_example["subtask"] == "seq_gc_pct"
+    assert first_example["source"] == "hf-carbon/natural-plasmids"
+
+
 def test_helpsteer3_dataset():
     # load the dataset
     data_config = {"dataset_name": "HelpSteer3"}

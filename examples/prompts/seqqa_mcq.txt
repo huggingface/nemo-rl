@@ -1,0 +1,3 @@
+Answer the following multiple choice question. Choose the best option from A, B, C, and D.
+Do not include an explanation.
+Respond with exactly one line in this format: Answer: $LETTER

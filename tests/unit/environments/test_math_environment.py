@@ -345,6 +345,39 @@ def test_multichoice_env_step_basic(multichoice_env, multichoice_test_data):
     assert all(result.terminateds == 1.0), "All terminated flags should be 1.0"
 
 
+@pytest.mark.parametrize("multichoice_env", ["english_multichoice"], indirect=True)
+def test_english_multichoice_env_rejects_missing_and_malformed_answers(
+    multichoice_env,
+):
+    """Test English MCQ reward rejects responses without a valid final answer."""
+    message_log_batch = [
+        [
+            {"role": "user", "content": "Question"},
+            {"role": "assistant", "content": "Reasoning only, no final answer."},
+        ],
+        [
+            {"role": "user", "content": "Question"},
+            {"role": "assistant", "content": "Answer: option C"},
+        ],
+        [
+            {"role": "user", "content": "Question"},
+            {"role": "assistant", "content": "Answer: C"},
+        ],
+    ]
+    metadata = [
+        {"ground_truth": "C"},
+        {"ground_truth": "C"},
+        {"ground_truth": "C"},
+    ]
+
+    result = ray.get(multichoice_env.step.remote(message_log_batch, metadata))
+
+    assert result.rewards.tolist() == [0.0, 0.0, 1.0]
+    assert result.observations[0]["content"] == "Environment: incorrect"
+    assert result.observations[1]["content"] == "Environment: incorrect"
+    assert result.observations[2]["content"] == "Environment: correct"
+
+
 def test_math_env_step_mixed(math_env, mixed_test_data):
     """Test MathEnvironment step with a mix of correct and incorrect responses."""
     result = ray.get(

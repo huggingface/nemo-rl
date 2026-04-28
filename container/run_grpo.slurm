@@ -73,8 +73,9 @@ else
     fi
 fi
 
-# Ray venv cache on persistent storage
+# Shared caches on persistent /fsx storage
 export NEMO_RL_VENV_DIR="/fsx/edward/.cache/nemo-rl/ray_venvs"
+export HF_HOME="/fsx/edward/.cache/huggingface"
 
 # Ray settings
 export RAY_ENABLE_UV_RUN_RUNTIME_ENV=0

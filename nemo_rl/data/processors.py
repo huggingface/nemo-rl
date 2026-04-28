@@ -684,8 +684,9 @@ def multichoice_qa_processor(
     answer = str(datum_dict["answer"])
     options = datum_dict["options"]
     extra_env_info = {"ground_truth": answer}
-    if "subject" in datum_dict:
-        extra_env_info.update({"subject": datum_dict["subject"]})
+    for metadata_key in ("subject", "id", "subtask", "source"):
+        if metadata_key in datum_dict:
+            extra_env_info[metadata_key] = datum_dict[metadata_key]
 
     message_log: LLMMessageLogType = []
 
