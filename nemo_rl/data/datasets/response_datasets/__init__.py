@@ -40,6 +40,7 @@ from nemo_rl.data.datasets.response_datasets.openmathinstruct2 import (
 )
 from nemo_rl.data.datasets.response_datasets.refcoco import RefCOCODataset
 from nemo_rl.data.datasets.response_datasets.response_dataset import ResponseDataset
+from nemo_rl.data.datasets.response_datasets.seqqa_synth import SeqQASynthMCQDataset
 from nemo_rl.data.datasets.response_datasets.squad import SquadDataset
 from nemo_rl.data.datasets.response_datasets.tulu3 import Tulu3SftMixtureDataset
 
@@ -57,6 +58,7 @@ DATASET_REGISTRY = {
     "open_assistant": OasstDataset,
     "OpenMathInstruct-2": OpenMathInstruct2Dataset,
     "refcoco": RefCOCODataset,
+    "SeqQASynthMCQ": SeqQASynthMCQDataset,
     "squad": SquadDataset,
     "tulu3_sft_mixture": Tulu3SftMixtureDataset,
     "gsm8k": GSM8KDataset,
@@ -111,6 +113,7 @@ __all__ = [
     "OpenMathInstruct2Dataset",
     "RefCOCODataset",
     "ResponseDataset",
+    "SeqQASynthMCQDataset",
     "SquadDataset",
     "Tulu3SftMixtureDataset",
     "load_response_dataset",

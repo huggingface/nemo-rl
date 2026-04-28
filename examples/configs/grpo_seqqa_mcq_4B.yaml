@@ -1,0 +1,65 @@
+defaults: "grpo_math_1B.yaml"
+
+grpo:
+  num_prompts_per_step: 16
+  num_generations_per_prompt: 8
+  max_num_steps: 300
+  val_period: 0
+  val_at_start: false
+  val_at_end: false
+  max_val_samples: 0
+
+checkpointing:
+  checkpoint_dir: "results/grpo-seqqa-v0_4x-qwen3-4b-instruct-2507"
+  metric_name: "train:reward"
+  save_period: 50
+
+policy:
+  model_name: "Qwen/Qwen3-4B-Instruct-2507"
+  tokenizer:
+    chat_template_kwargs:
+      enable_thinking: false
+  train_global_batch_size: 128
+  train_micro_batch_size: 1
+  generation_batch_size: 16
+  logprob_batch_size: 1
+  max_total_sequence_length: 4096
+  generation:
+    max_new_tokens: 256
+
+data:
+  train:
+    dataset_name: SeqQASynthMCQ
+    data_path: "hf-carbon/seqqa-synth"
+    subset: "v0_4x"
+    split: "train"
+    split_validation_size: 0
+    seed: ${grpo.seed}
+  validation: null
+  default:
+    prompt_file: "examples/prompts/seqqa_mcq.txt"
+    system_prompt_file: null
+    processor: "multichoice_qa_processor"
+    env_name: "math"
+
+env:
+  math:
+    num_workers: 8
+    verifier_type: "english_multichoice"
+    math_verify_impl: "hf_math_verify"
+
+logger:
+  log_dir: "logs/grpo-seqqa-v0_4x-qwen3-4b-instruct-2507"
+  wandb_enabled: true
+  trackio_enabled: true
+  wandb:
+    project: "nemo-rl"
+    name: "grpo-seqqa-v0_4x-qwen3-4b-instruct-2507"
+  trackio:
+    project: "nemo-rl"
+    name: "grpo-seqqa-v0_4x-qwen3-4b-instruct-2507"
+    dir: "logs/trackio-grpo-seqqa-v0_4x-qwen3-4b-instruct-2507"
+
+cluster:
+  gpus_per_node: 8
+  num_nodes: 1
