@@ -59,10 +59,10 @@ jobs:
       - name: Get PR info
         id: get-pr-info
         if: startsWith(github.ref, 'refs/heads/pull-request/')
-        uses: nv-gha-runners/get-pr-info@main
+        uses: nv-gha-runners/get-pr-info@090577647b8ddc4e06e809e264f7881650ecdccf  # main
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           fetch-depth: 0
 
@@ -103,7 +103,7 @@ jobs:
       - name: Get changed files
         id: changed-files
         if: startsWith(github.ref, 'refs/heads/pull-request/')
-        uses: step-security/changed-files@v45.0.1
+        uses: step-security/changed-files@3dbe17c78367e7d60f00d78ae6781a35be47b4a1  # v45.0.1
         with:
           base_sha: ${{ steps.base-head-ref.outputs.base_sha }}
           files_yaml: |
@@ -174,7 +174,7 @@ jobs:
           echo "image_tag=$IMAGE_TAG" | tee -a "$GITHUB_OUTPUT"
 
   org-member-pre-flight:
-    uses: NVIDIA-NeMo/FW-CI-templates/.github/workflows/_cicd_preflight.yml@v0.80.1
+    uses: NVIDIA-NeMo/FW-CI-templates/.github/workflows/_cicd_preflight.yml@d241fcfa92900f804cd425c7abc11855e5532064  # v0.80.1
     with:
       default_runner_prefix: ${{ vars.DEFAULT_RUNNER_PREFIX }}
       non_nvidia_runner_prefix: ${{ vars.NON_NVIDIA_RUNNER_PREFIX }}
@@ -244,18 +244,18 @@ jobs:
           pip cache purge || true
           sudo npm cache clean --force || true
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           submodules: "recursive"
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86  # v5.4.2
         with:
           version: "0.9.1"
           enable-cache: true
           prune-cache: false
       # Faster than uv python install since it caches python alongside runner
       - name: "Set up Python"
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
         with:
           python-version-file: ".python-version"
       - name: Check lint
@@ -281,12 +281,12 @@ jobs:
   sphinx-build:
     needs: [pre-flight]
     if: ${{ needs.pre-flight.outputs.test_level != 'none' }}
-    uses: NVIDIA-NeMo/FW-CI-templates/.github/workflows/_build_docs.yml@v0.57.0
+    uses: NVIDIA-NeMo/FW-CI-templates/.github/workflows/_build_docs.yml@5fc4e0babd2a25412bf43fbb526a18b9dd7a11b8  # v0.57.0
 
   build-container:
     if: ${{ needs.pre-flight.outputs.test_level != 'none' && needs.pre-flight.outputs.image_tag == '' }}
     needs: [pre-flight, org-member-pre-flight]
-    uses: NVIDIA-NeMo/FW-CI-templates/.github/workflows/_build_container.yml@v0.78.0
+    uses: NVIDIA-NeMo/FW-CI-templates/.github/workflows/_build_container.yml@6028f5d574734259b18a3a494fbf91191af8a475  # v0.78.0
     with:
       build-ref: ${{ needs.pre-flight.outputs.test_sha }}
       image-name: ${{ vars.CI_CONTAINER_NAME }}
@@ -323,7 +323,7 @@ jobs:
     environment: nemo-ci
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - name: main
         uses: ./.github/actions/test-template
         with:
@@ -364,7 +364,7 @@ jobs:
     name: ${{ matrix.script }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - name: main
         uses: ./.github/actions/test-template
         env:
@@ -394,7 +394,7 @@ jobs:
     environment: nemo-ci
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - name: main
         uses: ./.github/actions/test-template
         env:
@@ -421,7 +421,7 @@ jobs:
     environment: nemo-ci
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - name: main
         uses: ./.github/actions/test-template
         env:
@@ -520,10 +520,10 @@ jobs:
         flag: [doc-test, unit-test, e2e]
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
       - name: Download coverage reports of current branch
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131  # v7.0.0
         with:
           pattern: coverage-${{ matrix.flag }}-*
 
@@ -559,7 +559,7 @@ jobs:
 
       - name: Upload coverage reports to Codecov
         if: ${{ steps.check-artifacts.outputs.artifacts-found == 'true' }}
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@0fb7174895f61a3b6b78fc075e0cd60383518dac  # v5.5.5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
@@ -567,7 +567,7 @@ jobs:
 
       - name: Upload artifacts
         if: ${{ steps.check-artifacts.outputs.artifacts-found == 'true' }}
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f  # v6.0.0
         with:
           name: coverage-${{ matrix.flag }}-aggregated
           path: |
